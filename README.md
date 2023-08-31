@@ -2,8 +2,10 @@
 
 A docker container to build [LineageOS](https://lineageos.org/) 20.0
 
-The goal is to have an environment, easy to setup on any platform, to build LineageOS 20.0 roms.  
+The goal is to have an environment, easy to setup on any host, to build LineageOS 20.0 roms.  
 The container is started in interactive mode to manually run the build commands.  
+The `lineage` user in the container is created using the user id and group id of the builder of the container. So that it will update files with the same user id and group id on the shared volumes.
+So, this container should be created and started by the same user on the same host. Do not publish it on an external registry like docker hub.
 
 <!-- MDTOC maxdepth:6 firsth1:0 numbering:0 flatten:0 bullets:1 updateOnSave:1 -->
 
@@ -15,7 +17,7 @@ The container is started in interactive mode to manually run the build commands.
 ## Build the container
 
 ```shell
-$ docker build -t docker-lineageos-build .
+$ docker build --build-arg uid=$(id -u) --build-arg gid=$(id -g)  -t docker-lineageos-build .
 ```
 
 ## Start the build environment

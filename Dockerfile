@@ -85,12 +85,16 @@ RUN set -ex ;\
 ENV DEBIAN_FRONTEND=dialog
 
 # Add user lineage and setup its environment (env variable to setup ccache at startup, source envsetup.sh, startup message, ...)
+ARG uid
+ARG gid
 RUN set -ex ;\
-	useradd -m --shell /bin/bash lineage && \
-	echo "" >> /home/lineage/.profile && \
-	echo "# Custom settings for the container user" >> /home/lineage/.bashrc && \
-	echo "source ~/.profile-lineage" >> /home/lineage/.bashrc
+        groupadd -g ${gid} lineage && \
+        useradd -u ${uid} -g lineage -m --shell /bin/bash lineage && \
+        echo "" >> /home/lineage/.profile && \
+        echo "# Custom settings for the container user" >> /home/lineage/.bashrc && \
+        echo "source ~/.profile-lineage" >> /home/lineage/.bashrc
 COPY --chown=lineage:lineage --chmod=644 home.lineage /home/lineage
+
 USER lineage
 WORKDIR /lineage
 
