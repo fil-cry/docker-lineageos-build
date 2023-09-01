@@ -44,12 +44,13 @@ RUN set -ex ;\
 		# Install python3
 		python3 \
 		# No repo package available in focal, but repo requires less and ssh commands, and the curl to download repo requires ca-certificates
-		bash-completion \
 		ca-certificates \
 		less \
 		openssh-client \
 		# Other tools required to setup the container, or at certain build steps, or for comfort
-		unzip && \
+		bash-completion \
+		unzip \
+		vim && \
 		# Cleaning
 		apt-get clean && \
 		rm -rf /var/lib/apt/lists/* && \
@@ -74,17 +75,16 @@ RUN set -ex ;\
     rm ${REPO} && \
     rm -rf /tmp/.repo
 
-# Optional, for container debbuging : adds sudo, vim, ...
+# Optional, for container debbuging : adds sudo, ...
 #RUN set -ex ;\
 #    apt-get update && apt-get -y --no-install-recommends install \
-#		sudo \
-#		vim && \
+#		sudo && \
 #    echo "worker ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
-#	echo "alias ll='ls -la --color'" >> /etc/bash.bashrc
+#    echo "alias ll='ls -la --color'" >> /etc/bash.bashrc
 
-# Configure the environment for the user (setup ccache at startup, source envsetup.sh, startup message, ...)
+# Script used to create the worker user and configure its enironment
 COPY --chmod=644 worker.profile /usr/local/etc
 COPY --chmod=744 create-worker-user.sh /usr/local/bin
 ENV DEBIAN_FRONTEND=dialog
 
-ENTRYPOINT ["bash", "-c", "create-worker-user.sh ${wuid} ${wgid} && exec su - worker"]
+ENTRYPOINT ["bash", "-c", "create-worker-user.sh ${WUID} ${WGID} ${USE_CCACHE} && su - worker"]
