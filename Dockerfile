@@ -75,31 +75,18 @@ RUN set -ex ;\
     rm -rf /tmp/.repo
 
 # Optional, for container debbuging : adds sudo, vim, ...
-RUN set -ex ;\
-    apt-get update && apt-get -y --no-install-recommends install \
-		sudo \
-		vim && \
-    echo "lineage ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
-	echo "alias ll='ls -la --color'" >> /etc/bash.bashrc
+#RUN set -ex ;\
+#    apt-get update && apt-get -y --no-install-recommends install \
+#		sudo \
+#		vim && \
+#    echo "lineage ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
+#	echo "alias ll='ls -la --color'" >> /etc/bash.bashrc
 
+# Configure the environment for the user (setup ccache at startup, source envsetup.sh, startup message, ...)
+COPY --chmod=755 worker-init.sh /usr/local/bin
+WORKDIR /lineage
 ENV DEBIAN_FRONTEND=dialog
 
-# Add user lineage and setup its environment (env variable to setup ccache at startup, source envsetup.sh, startup message, ...)
-#ARG uid
-#ARG gid
-#RUN set -ex ;\
-#        groupadd -g ${gid} lineage && \
-#        useradd -u ${uid} -g lineage -m --shell /bin/bash lineage && \
-#        echo "" >> /home/lineage/.profile && \
-#        echo "# Custom settings for the container user" >> /home/lineage/.bashrc && \
-#        echo "source ~/.profile-lineage" >> /home/lineage/.bashrc
-#COPY --chown=lineage:lineage --chmod=644 home.lineage /home/lineage
-#USER lineage
-
-COPY --chmod=755 builder-init.sh /usr/local/bin
-RUN useradd -m --shell /bin/bash lineage
-#USER lineage
-WORKDIR /lineage
-
 ENTRYPOINT ["/bin/bash"]
-CMD ["--init-file", "/usr/local/bin/builder-init.sh"]
+CMD ["--init-file", "/usr/local/bin/worker-init.sh"]
+

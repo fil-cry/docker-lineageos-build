@@ -5,6 +5,7 @@ PS1='${debian_chroot:+($debian_chroot)}\[\033[01;35m\]\u@\h\[\033[00m\]:\[\033[0
 PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
 
 # setup minimal git config
+export HOME=/lineage
 git config --global user.email "you@example.com"
 git config --global user.name "Your Name"
 git config --global color.ui true
@@ -33,7 +34,7 @@ fi
 source /lineage/build/envsetup.sh
 
 # startup message
-#clear
+clear
 echo
 echo -e '##################################################'
 echo -e '#                                                #'
