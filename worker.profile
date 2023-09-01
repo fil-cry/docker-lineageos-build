@@ -1,19 +1,23 @@
-# customized prompt colors
+# customize prompt colors
 PS1='${debian_chroot:+($debian_chroot)}\[\033[01;35m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
 PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
 
-# setup ccache, with a defaut 50G max size when no max size is defined yet
-export CCACHE_DIR=/ccache
-export CCACHE_EXEC=$(which ccache)
-export USE_CCACHE=1
-if [[ ! -e /ccache/ccache.conf || $(grep -q max_size /ccache/ccache.conf) ]] ; then ccache -M 50G ; fi
-
-# global git config 
+# setup minimal git config
 git config --global user.email "you@example.com"
 git config --global user.name "Your Name"
 git config --global color.ui true
 
+# Enable ccache, unless the container is started with an ENV variable USE_CCACHE != 1
+export CCACHE_DIR=/ccache
+export CCACHE_EXEC=$(which ccache)
+export USE_CCACHE=1
+# set default ccache max size to 50G if ts not configured in /ccache yet
+if [ -n ${USE_CCACHE} ] && [ ${USE_CCACHE} == 1 ] && ( [ ! -e /ccache/ccache.conf ] || ! $(grep -q max_size /ccache/ccache.conf) ) ; then
+	ccache -M 50G
+fi
+
 # source envsetup.sh
+cd /lineage
 if [ -f /lineage/build/envsetup.sh ]; then
 	. /lineage/build/envsetup.sh
 	env_setup_loaded=yes
@@ -21,10 +25,7 @@ else
     env_setup_loaded=
 fi
 
-source /lineage/build/envsetup.sh
-
 # startup message
-clear
 echo
 echo -e '##################################################'
 echo -e '#                                                #'
