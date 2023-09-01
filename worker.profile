@@ -7,6 +7,11 @@ git config --global user.email "you@example.com"
 git config --global user.name "Your Name"
 git config --global color.ui true
 
+# create a repo config file in home if non exist
+if [ ! -f ~/.repo_.gitconfig.json ] ; then
+	echo "{}" > ~/.repo_.gitconfig.json
+fi
+
 # Enable ccache, unless the container is started with an ENV variable USE_CCACHE != 1
 export CCACHE_DIR=/ccache
 export CCACHE_EXEC=$(which ccache)
