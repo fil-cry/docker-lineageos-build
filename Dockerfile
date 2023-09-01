@@ -79,14 +79,12 @@ RUN set -ex ;\
 #    apt-get update && apt-get -y --no-install-recommends install \
 #		sudo \
 #		vim && \
-#    echo "lineage ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
+#    echo "worker ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
 #	echo "alias ll='ls -la --color'" >> /etc/bash.bashrc
 
 # Configure the environment for the user (setup ccache at startup, source envsetup.sh, startup message, ...)
-COPY --chmod=755 worker-init.sh /usr/local/bin
-WORKDIR /lineage
+COPY --chmod=644 worker.profile /usr/local/etc
+COPY --chmod=744 create-worker-user.sh /usr/local/bin
 ENV DEBIAN_FRONTEND=dialog
 
-ENTRYPOINT ["/bin/bash"]
-CMD ["--init-file", "/usr/local/bin/worker-init.sh"]
-
+ENTRYPOINT ["bash", "-c", "create-worker-user.sh ${wuid} ${wgid} && exec su - worker"]

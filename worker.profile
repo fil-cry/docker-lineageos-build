@@ -1,11 +1,10 @@
-#!/bin/bash
 
 # customize prompt colors
 PS1='${debian_chroot:+($debian_chroot)}\[\033[01;35m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
 PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
 
 # setup minimal git config
-export HOME=/lineage
+#export HOME=/lineage
 git config --global user.email "you@example.com"
 git config --global user.name "Your Name"
 git config --global color.ui true
@@ -25,16 +24,15 @@ fi
 
 # source envsetup.sh
 if [ -f /lineage/build/envsetup.sh ]; then
+	cd /lineage
 	. /lineage/build/envsetup.sh
 	env_setup_loaded=yes
 else
     env_setup_loaded=
 fi
 
-source /lineage/build/envsetup.sh
-
 # startup message
-clear
+#clear
 echo
 echo -e '##################################################'
 echo -e '#                                                #'
